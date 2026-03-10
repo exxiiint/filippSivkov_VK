@@ -1,47 +1,60 @@
 package com.example.androidproject
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.androidproject.ui.theme.AndroidProjectTheme
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import android.app.Activity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : Activity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            AndroidProjectTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+        setContentView(R.layout.activity_first)
+        val editText = findViewById<EditText>(R.id.editTextText)
+        val btnOpenSecond = findViewById<Button>(R.id.button)
+        val btnCall = findViewById<Button>(R.id.button2)
+        val btnShare = findViewById<Button>(R.id.button3)
+
+        btnOpenSecond.setOnClickListener {
+            val text = editText.text.toString()
+            if (text.isNotEmpty()) {
+                val intent = Intent(this, SecondActivity::class.java)
+                intent.putExtra("EXTRA_TEXT", text)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Введите текст", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+        btnCall.setOnClickListener {
+            val phoneNumber = editText.text.toString()
+            if (phoneNumber.isNotEmpty()) {
+                val intent = Intent(Intent.ACTION_DIAL)
+                intent.data = Uri.parse("tel:$phoneNumber")
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Введите номер", Toast.LENGTH_SHORT).show()
+            }
+        }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AndroidProjectTheme {
-        Greeting("Android")
+        btnShare.setOnClickListener {
+            val text = editText.text.toString()
+
+            if (text.isNotEmpty()) {
+                // Создаем Intent для отправки текста
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.type = "text/plain"
+                intent.putExtra(Intent.EXTRA_TEXT, text)
+
+                // Создаем системное окно выбора приложения
+                val chooser = Intent.createChooser(intent, "Поделиться через...")
+                startActivity(chooser)
+            } else {
+                Toast.makeText(this, "Введите текст", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
