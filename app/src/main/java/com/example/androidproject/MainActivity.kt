@@ -44,12 +44,10 @@ class MainActivity : Activity() {
             val text = editText.text.toString()
 
             if (text.isNotEmpty()) {
-                // Создаем Intent для отправки текста
                 val intent = Intent(Intent.ACTION_SEND)
                 intent.type = "text/plain"
                 intent.putExtra(Intent.EXTRA_TEXT, text)
 
-                // Создаем системное окно выбора приложения
                 val chooser = Intent.createChooser(intent, "Поделиться через...")
                 startActivity(chooser)
             } else {
